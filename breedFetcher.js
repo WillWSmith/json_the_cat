@@ -1,12 +1,12 @@
 const request = require("request");
 
-const breedFetcher = (breedName) => {
-  // Construct the API endpoint URL with the breed name query parameter
+const fetchBreedDescription = function(breedName, callback) {
   const url = `https://api.thecatapi.com/v1/breeds/search?q=${breedName}`;
 
   request(url, (error, response, body) => {
     if (error) {
-      console.error(`Request failed: `, error);
+      // If there's an error, pass the error to the callback
+      callback(error, null);
       return;
     }
 
@@ -14,13 +14,15 @@ const breedFetcher = (breedName) => {
 
     // Check if the response array is empty
     if (data.length === 0) {
-      console.log(`Sorry, breed not found.`);
+      // If breed not found, pass a message to the callback
+      callback(null, "Sorry, breed not found.");
     } else {
-      // Log the description of the first breed in the response
-      console.log(`Description: `, data[0].description);
+      // If successful, pass the description to the callback
+      callback(null, data[0].description);
     }
   });
 };
 
-const breedName = process.argv[2];
-breedFetcher(breedName);
+module.exports = {
+  fetchBreedDescription,
+};
